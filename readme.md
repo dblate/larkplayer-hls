@@ -1,10 +1,10 @@
-##larkplayer-hls
+<h1>larkplayer-hls</h1>
 
 为 [larkplayer](https://github.com/dblate/larkplayer) 增加播放器 hls(m3u8) 类型视频文件的能力
 
-###使用
+<h3>使用</h3>
 
-下载 [larkplayer](https://github.com/dblate/larkplayer) [hls.js](https://github.com/video-dev/hls.js) [larkplayer-hls](https://github.com/dblate/larkplayer-hls)，将 3 者引入到页面。
+下载 [larkplayer](https://github.com/dblate/larkplayer) [hls.js](https://github.com/video-dev/hls.js) [larkplayer-hls](https://github.com/dblate/larkplayer-hls)，并将其者引入到页面。
 
 ```javascript
 <!DOCTYPE html>

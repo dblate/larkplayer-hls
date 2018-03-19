@@ -39,7 +39,7 @@ module.exports = function (grunt) {
                     }
                 },
                 files: {
-                    './dist/<%= pkg.name %>.js': ['./<%= pkg.name %>.js']
+                    './dist/<%= pkg.name %>.js': ['./src/<%= pkg.name %>.js']
                 }
             }
         }
