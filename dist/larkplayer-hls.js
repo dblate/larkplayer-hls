@@ -15,7 +15,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var recoverDecodingErrorDate = void 0;
 var recoverSwapAudioCodecDate = void 0;
 function handleMediaError() {
-    consolog.log('auto recover from media error');
     var now = Date.now();
     var minRecoverInterval = 3000;
     if (!recoverDecodingErrorDate || now - recoverDecodingErrorDate > minRecoverInterval) {
@@ -35,18 +34,18 @@ function larkplayerHls() {
 
     var hls = null;
     var player = this.player;
+    var originalPlay = player.play.bind(this);
+    var hlsMimeType = 'application/vnd.apple.mpegurl';
 
     function hlsPlay(src) {
         if (!/\.m3u8?$/.test(src)) {
+            originalPlay();
             return;
         }
 
         var videoEl = player.tech.el;
-        var hlsMimeType = 'application/vnd.apple.mpegurl';
         if (videoEl.canPlayType(hlsMimeType)) {
-            player.on('canplay', function (event) {
-                player.play();
-            });
+            originalPlay();
         } else if (_hls2.default.isSupported()) {
             if (hls) {
                 hls.detachMedia();
@@ -63,16 +62,16 @@ function larkplayerHls() {
             hls.loadSource(src);
 
             hls.on(_hls2.default.Events.MEDIA_ATTACHED, function () {
-                console.log('media attached');
+                // console.log('media attached');
             });
 
             hls.on(_hls2.default.Events.MANIFEST_PARSED, function (event, data) {
-                console.log("manifest loaded, found " + data.levels.length + " quality level");
-                player.play();
+                // console.log("manifest loaded, found " + data.levels.length + " quality level");
+                originalPlay();
             });
 
             hls.on(_hls2.default.Events.ERROR, function (event, data) {
-                console.warn(data);
+                // console.warn(data);
                 if (data.fatal) {
                     switch (data.type) {
                         case _hls2.default.ErrorTypes.MEDIA_ERROR:
@@ -86,17 +85,15 @@ function larkplayerHls() {
                 }
             });
         } else {
-            console.log('浏览器不支持 m3u8 文件播放');
+            originalPlay();
         }
     }
 
-    hlsPlay(player.src());
-
-    player.on('srcchange', function () {
+    player.play = function () {
         setTimeout(function () {
             hlsPlay(player.src());
         }, 0);
-    });
+    };
 }
 
 _larkplayer2.default.registerPlugin('hls', larkplayerHls);
