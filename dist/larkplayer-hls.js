@@ -12,29 +12,91 @@ var _hls2 = _interopRequireDefault(_hls);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function larkplayerHls() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+var recoverDecodingErrorDate = void 0;
+var recoverSwapAudioCodecDate = void 0;
+function handleMediaError() {
+    consolog.log('auto recover from media error');
+    var now = Date.now();
+    var minRecoverInterval = 3000;
+    if (!recoverDecodingErrorDate || now - recoverDecodingErrorDate > minRecoverInterval) {
+        recoverDecodingErrorDate = Date.now();
+        hls.recoverMediaError();
+    } else if (!recoverSwapAudioCodecDate || now - recoverSwapAudioCodecDate > minRecoverInterval) {
+        recoverSwapAudioCodecDate = Date.now();
+        hls.swapAudioCodec();
+        hls.recoverMediaError();
+    } else {
+        hls.destroy();
+    }
+}
 
-    var hls = new _hls2.default(options);
+function larkplayerHls() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { debug: true };
+
+    var hls = null;
     var player = this.player;
 
-    var videoEl = player.tech.el;
-    var src = player.src();
+    function hlsPlay(src) {
+        if (!/\.m3u8?$/.test(src)) {
+            return;
+        }
 
-    if (/\.m3u8?$/.test(src)) {
-        hls.attachMedia(videoEl);
-        hls.on(_hls2.default.Events.MEDIA_ATTACHED, function () {
-            console.log("video and hls.js are now bound together !");
+        var videoEl = player.tech.el;
+        var hlsMimeType = 'application/vnd.apple.mpegurl';
+        if (videoEl.canPlayType(hlsMimeType)) {
+            player.on('canplay', function (event) {
+                player.play();
+            });
+        } else if (_hls2.default.isSupported()) {
+            if (hls) {
+                hls.detachMedia();
+                hls.destroy();
+                if (hls.bufferTimer) {
+                    clearInterval(hls.bufferTimer);
+                    hls.bufferTimer = undefined;
+                }
+                hls = null;
+            }
 
+            hls = new _hls2.default(options);
+            hls.attachMedia(videoEl);
             hls.loadSource(src);
+
+            hls.on(_hls2.default.Events.MEDIA_ATTACHED, function () {
+                console.log('media attached');
+            });
+
             hls.on(_hls2.default.Events.MANIFEST_PARSED, function (event, data) {
                 console.log("manifest loaded, found " + data.levels.length + " quality level");
-                if (this.player.autoplay()) {
-                    this.player.play();
+                player.play();
+            });
+
+            hls.on(_hls2.default.Events.ERROR, function (event, data) {
+                console.warn(data);
+                if (data.fatal) {
+                    switch (data.type) {
+                        case _hls2.default.ErrorTypes.MEDIA_ERROR:
+                            handleMediaError();
+                            break;
+                        case _hls2.default.ErrorTypes.NETWORK_ERROR:
+                        default:
+                            hls.destroy();
+                            break;
+                    }
                 }
             });
-        });
+        } else {
+            console.log('浏览器不支持 m3u8 文件播放');
+        }
     }
+
+    hlsPlay(player.src());
+
+    player.on('srcchange', function () {
+        setTimeout(function () {
+            hlsPlay(player.src());
+        }, 0);
+    });
 }
 
 _larkplayer2.default.registerPlugin('hls', larkplayerHls);
