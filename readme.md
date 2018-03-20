@@ -2,6 +2,9 @@
 
 为 [larkplayer](https://github.com/dblate/larkplayer) 增加播放 m3u8 文件的能力
 
+<h3>示例</h3>
+https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
+
 <h3>使用</h3>
 
 下载 [larkplayer](https://github.com/dblate/larkplayer) [hls.js](https://github.com/video-dev/hls.js) [larkplayer-hls](https://github.com/dblate/larkplayer-hls)，并将其者引入到页面。
