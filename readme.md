@@ -1,20 +1,20 @@
 <h1>larkplayer-hls</h1>
 
-为 [larkplayer](https://github.com/dblate/larkplayer) 增加播放 m3u8 文件的能力
+[larkplayer](https://github.com/dblate/larkplayer) 插件，提供播放 m3u8 的能力
 
 <h3>示例</h3>
 https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
 
 <h3>使用</h3>
 
-下载 [larkplayer](https://github.com/dblate/larkplayer) [hls.js](https://github.com/video-dev/hls.js) [larkplayer-hls](https://github.com/dblate/larkplayer-hls)，并将其者引入到页面。
+<h4>通过 script 标签的形式 </h4>
 
 ```javascript
 <!DOCTYPE html>
 <html>
 <head>
     <title>larkplayer hls</title>
-    <!-- 此 cdn 只是拿来作为示例使用，生产环境中请使用自己的 cdn -->
+    <!-- 此 cdn 只是拿来作为示例使用，生产环境中请将文件保存在自己的服务器 -->
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/larkplayer@latest/dist/larkplayer.css">
 </head>
 <body>
@@ -52,5 +52,20 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
     </script>
 </body>
 </html>
+
+```
+
+<h4>通过 reqiure 的形式</h4>
+
+```javascript
+import larkplayer from 'larkplayer';
+import 'hls.js';
+import 'larkplayer-hls';
+
+larkplayer('video-el', {
+    plugins: {
+        hls: {}
+    }
+});
 
 ```
