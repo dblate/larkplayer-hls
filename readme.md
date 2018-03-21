@@ -22,7 +22,7 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
  
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script type="text/javascript" src="https://unpkg.com/larkplayer@latest/dist/larkplayer.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/larkplayer-hls@latest/dist/larkplayer-hls.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/larkplayer-hls@latest/dist/larkplayer-hls-script.js"></script>
 
     <script type="text/javascript">
         // 以 script 的形式引用时，larkplayer 会直接挂载在 window 上
