@@ -29,23 +29,12 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
         var player = larkplayer('video-el', {
             width: 640,
             height: 360,
-            // 设置 hls 以启用插件
             plugins: {
                 // 可传入 hls.js 提供的参数
                 hls: {}
             }
         }, function () {
             console.log('player is ready');
-        });
-
-        player.on('firstplay', function () {
-            console.log('firstplay');
-        });
-        player.on('play', function () {
-            console.log('play');
-        });
-        player.on('ended', function () {
-            console.log('ended');
         });
 
         player.play();
@@ -55,17 +44,22 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
 
 ```
 
-<h4>通过 reqiure 的形式</h4>
+<h4>通过 import 的形式</h4>
+
+* require 与 import 用法相似，只不过换了个写法，反正目前都会被编译为差不多的代码 :)
 
 ```javascript
 import larkplayer from 'larkplayer';
 import 'hls.js';
 import 'larkplayer-hls';
 
-larkplayer('video-el', {
+const player = larkplayer('video-el', {
     plugins: {
         hls: {}
     }
 });
+
+player.src('xxx.m3u8');
+player.play();
 
 ```
