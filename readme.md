@@ -29,8 +29,8 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
         var player = larkplayer('video-el', {
             width: 640,
             height: 360,
-            plugins: {
-                // 可传入 hls.js 提供的参数
+            // 此配置项可选，可配置 hls 对应的参数（即为 hls.js 提供的参数）
+            mediaSourceHandler: {
                 hls: {}
             }
         }, function () {
