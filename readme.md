@@ -53,11 +53,7 @@ import larkplayer from 'larkplayer';
 import 'hls.js';
 import 'larkplayer-hls';
 
-const player = larkplayer('video-el', {
-    plugins: {
-        hls: {}
-    }
-});
+const player = larkplayer('video-el');
 
 player.src('xxx.m3u8');
 player.play();
