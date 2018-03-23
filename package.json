@@ -3,7 +3,7 @@
   "title": "larkplayer-hls",
   "description": "larkplayer hls plugin",
   "main": "dist/larkplayer-hls.js",
-  "version": "0.0.1",
+  "version": "0.0.7",
   "homepage": "https://github.com/dblate/larkplayer-hls",
   "author": {
     "name": "2222bnting"
@@ -41,10 +41,6 @@
     "grunt-contrib-less": "1.4.1",
     "grunt-contrib-uglify": "3.2.1",
     "grunt-contrib-watch": "1.0.0"
-  },
-  "dependencies": {
-    "hls.js": "^0.8.9",
-    "larkplayer": "^1.2.4"
   },
   "browserify-shim": {
     "larkplayer": "global:larkplayer",

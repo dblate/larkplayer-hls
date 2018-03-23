@@ -1,86 +1,81 @@
+/**
+ * @file larkplayer hls plugin
+ * @author yuhui06
+ * @date 2018/3/23
+ */
+
+
 import larkplayer from 'larkplayer';
 import Hls from 'hls.js';
 
-let recoverDecodingErrorDate;
-let recoverSwapAudioCodecDate;
-function handleMediaError() {
-    const now = Date.now();
-    const minRecoverInterval = 3000;
-    if (!recoverDecodingErrorDate || (now - recoverDecodingErrorDate) > minRecoverInterval) {
-        recoverDecodingErrorDate = Date.now();
-        hls.recoverMediaError();
-    } else if (!recoverSwapAudioCodecDate || (now - recoverSwapAudioCodecDate) > minRecoverInterval) {
-        recoverSwapAudioCodecDate = Date.now();
-        hls.swapAudioCodec();
-        hls.recoverMediaError();
-    } else {
-        hls.destroy();
-    }
-}
+const larkplayerHlsHandler = {
+    name: 'hls',
+    mimeTypeRe: /application\/((x-mpegURL)|(vnd\.apple\.mpegurl))/i,
+    fileExtRe: /\.m3u8?/i,
+    hls: null,
+    canHandleSource(source = {}) {
+        source.type = source.type + '';
+        source.src = source.src + '';
 
-function larkplayerHls(options = {debug: true}) {
-    let hls = null;
-    const player = this.player;
-    const originalPlay = player.play.bind(this);
-    const hlsMimeType = 'application/vnd.apple.mpegurl';
+        const canPlay = this.mimeTypeRe.test(source.type) || this.fileExtRe.test(source.src);
+        return canPlay;
+    },
+    handleSource(source = {}, player, options = {}) {
+        player.isReady = false;
 
-    function hlsPlay(src) {
-        if (!/\.m3u8?$/.test(src)) {
-            originalPlay();
-            return;
+        if (this.hls) {
+            this.dispose();
         }
 
-        const videoEl = player.tech.el;
-        if (videoEl.canPlayType(hlsMimeType)) {
-            originalPlay();
-        } else if (Hls.isSupported()) {
-            if (hls) {
-                hls.detachMedia();
-                hls.destroy();
-                if (hls.bufferTimer) {
-                    clearInterval(hls.bufferTimer);
-                    hls.bufferTimer = undefined;
+        this.hls = new Hls(options);
+        this.hls.attachMedia(player.tech.el);
+        this.hls.loadSource(source.src);
+
+        this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+            player.triggerReady();
+        });
+
+        this.hls.on(Hls.Events.ERROR, (event, data) => {
+            if (data.fatal) {
+                switch (data.type) {
+                    case Hls.ErrorTypes.MEDIA_ERROR:
+                        this.handleMediaError();
+                        break;
+                    case Hls.ErrorTypes.NETWORK_ERROR:
+                    default:
+                        this.hls.destroy();
+                        break;
                 }
-                hls = null;
             }
+        });
+    },
+    handleMediaError() {
+        const now = Date.now();
+        const minRecoverInterval = 3000;
 
-            hls = new Hls(options);
-            hls.attachMedia(videoEl);
-            hls.loadSource(src);
-
-            hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                // console.log('media attached');
-            });
-
-            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-                // console.log("manifest loaded, found " + data.levels.length + " quality level");
-                originalPlay();
-            });
-
-            hls.on(Hls.Events.ERROR, (event, data) => {
-                // console.warn(data);
-                if (data.fatal) {
-                    switch (data.type) {
-                        case Hls.ErrorTypes.MEDIA_ERROR:
-                            handleMediaError();
-                            break;
-                        case Hls.ErrorTypes.NETWORK_ERROR:
-                        default:
-                            hls.destroy();
-                            break;
-                    }
-                }
-            });
+        if (!this.recoverDecodingErrorDate || (now - this.recoverDecodingErrorDate) > minRecoverInterval) {
+            this.recoverDecodingErrorDate = now;
+            this.hls.recoverMediaError();
+        } else if (!this.recoverSwapAudioCodecDate || (now - this.recoverSwapAudioCodecDate) > minRecoverInterval) {
+            this.recoverSwapAudioCodecDate = now;
+            this.hls.swapAudioCodec();
+            this.hls.recoverMediaError();
         } else {
-            originalPlay();
+            this.hls.destroy();
         }
+    },
+    dispose() {
+        if (this.hls instanceof Hls) {
+            this.hls.destroy();
+            if (this.hls.bufferTimer) {
+                clearInterval(this.hls.bufferTimer);
+                this.hls.bufferTimer = undefined;
+            }
+        }
+        this.hls = null;
     }
+};
 
-    player.play = function () {
-        setTimeout(() => {
-            hlsPlay(player.src());
-        }, 0);
-    }
-}
+larkplayer.Html5.registerMediaSourceHandler(larkplayerHlsHandler);
 
-larkplayer.registerPlugin('hls', larkplayerHls);
+

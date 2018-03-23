@@ -25,18 +25,36 @@ module.exports = function (grunt) {
                 }
             }
         },
+        // browserify: {
+        //     dist: {
+        //         options: {
+        //             transform: [
+        //                 ["babelify", {
+        //                     presets: ['env']
+        //                 }],
+        //                 ["browserify-shim"]
+        //             ],
+        //             browserifyOptions: {
+        //                 standalone: '<%= pkg.name %>'
+        //             }
+        //         },
+        //         files: {
+        //             './dist/<%= pkg.name %>-script.js': ['./src/<%= pkg.name %>.js']
+        //         }
+        //     }
+        // }
         browserify: {
             dist: {
                 options: {
                     transform: [
                         ["babelify", {
                             presets: ['env']
-                        }],
-                        ["browserify-shim"]
+                        }]
                     ],
                     browserifyOptions: {
                         standalone: '<%= pkg.name %>'
-                    }
+                    },
+                    external: ['larkplayer', 'hls.js']
                 },
                 files: {
                     './dist/<%= pkg.name %>.js': ['./src/<%= pkg.name %>.js']
