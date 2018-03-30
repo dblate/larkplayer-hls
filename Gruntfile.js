@@ -30,7 +30,8 @@ module.exports = function (grunt) {
         //         options: {
         //             transform: [
         //                 ["babelify", {
-        //                     presets: ['env']
+        //                     // presets: [ "es3", ["es2015", {"loose": true}]]
+        //                     presets: [ "es3", ["es2015", {"loose": true}]]
         //                 }],
         //                 ["browserify-shim"]
         //             ],
@@ -48,7 +49,7 @@ module.exports = function (grunt) {
                 options: {
                     transform: [
                         ["babelify", {
-                            presets: ['env']
+                            presets: [ "es3", ["es2015", {"loose": true}]]
                         }]
                     ],
                     browserifyOptions: {
@@ -61,6 +62,23 @@ module.exports = function (grunt) {
                 }
             }
         }
+        // browserify: {
+        //     dist: {
+        //         options: {
+        //             transform: [
+        //                 ["babelify", {
+        //                     presets: [ "es3", ["es2015", {"loose": true}]]
+        //                 }]
+        //             ],
+        //             browserifyOptions: {
+        //                 standalone: 'Hls'
+        //             }
+        //         },
+        //         files: {
+        //             './dist/hls.js': ['./hls/hls.js']
+        //         }
+        //     }
+        // }
     });
     grunt.loadNpmTasks('grunt-babel');
     // grunt.loadNpmTasks('grunt-contrib-uglify');

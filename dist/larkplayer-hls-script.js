@@ -10,7 +10,7 @@ var _hls = (typeof window !== "undefined" ? window['Hls'] : typeof global !== "u
 
 var _hls2 = _interopRequireDefault(_hls);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /**
  * @file larkplayer hls plugin
@@ -30,7 +30,7 @@ var larkplayerHlsHandler = {
         source.src = source.src + '';
 
         var canPlay = this.mimeTypeRe.test(source.type) || this.fileExtRe.test(source.src);
-        return canPlay;
+        return canPlay && _hls2['default'] && _hls2['default'].isSupported();
     },
     handleSource: function handleSource() {
         var source = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -46,21 +46,21 @@ var larkplayerHlsHandler = {
             this.dispose();
         }
 
-        this.hls = new _hls2.default(options);
+        this.hls = new _hls2['default'](options);
         this.hls.attachMedia(player.tech.el);
         this.hls.loadSource(source.src);
 
-        this.hls.on(_hls2.default.Events.MANIFEST_PARSED, function (event, data) {
+        this.hls.on(_hls2['default'].Events.MANIFEST_PARSED, function (event, data) {
             player.triggerReady();
         });
 
-        this.hls.on(_hls2.default.Events.ERROR, function (event, data) {
+        this.hls.on(_hls2['default'].Events.ERROR, function (event, data) {
             if (data.fatal) {
                 switch (data.type) {
-                    case _hls2.default.ErrorTypes.MEDIA_ERROR:
+                    case _hls2['default'].ErrorTypes.MEDIA_ERROR:
                         _this.handleMediaError();
                         break;
-                    case _hls2.default.ErrorTypes.NETWORK_ERROR:
+                    case _hls2['default'].ErrorTypes.NETWORK_ERROR:
                     default:
                         _this.hls.destroy();
                         break;
@@ -84,7 +84,7 @@ var larkplayerHlsHandler = {
         }
     },
     dispose: function dispose() {
-        if (this.hls instanceof _hls2.default) {
+        if (this.hls instanceof _hls2['default']) {
             this.hls.destroy();
             if (this.hls.bufferTimer) {
                 clearInterval(this.hls.bufferTimer);
@@ -95,7 +95,9 @@ var larkplayerHlsHandler = {
     }
 };
 
-_larkplayer2.default.Html5.registerMediaSourceHandler(larkplayerHlsHandler);
+if (_hls2['default'] && _hls2['default'].isSupported()) {
+    _larkplayer2['default'].Html5.registerMediaSourceHandler(larkplayerHlsHandler);
+}
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1])(1)

@@ -18,7 +18,7 @@ const larkplayerHlsHandler = {
         source.src = source.src + '';
 
         const canPlay = this.mimeTypeRe.test(source.type) || this.fileExtRe.test(source.src);
-        return canPlay;
+        return canPlay && Hls && Hls.isSupported();
     },
     handleSource(source = {}, player, options = {}) {
         player.isReady = false;
@@ -76,6 +76,8 @@ const larkplayerHlsHandler = {
     }
 };
 
-larkplayer.Html5.registerMediaSourceHandler(larkplayerHlsHandler);
+if (Hls && Hls.isSupported()) {
+    larkplayer.Html5.registerMediaSourceHandler(larkplayerHlsHandler);
+}
 
 
