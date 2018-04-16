@@ -30,7 +30,7 @@ https://s.codepen.io/dblate/debug/vRybLW/GnMnbVdDYZVM
             width: 640,
             height: 360,
             // 此配置项可选，可配置 hls 对应的参数（即为 hls.js 提供的参数）
-            mediaSourceHandler: {
+            MS: {
                 hls: {}
             }
         }, function () {
