@@ -23,8 +23,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @date 2018/4/16 根据 larkplayer 接口变化更改插件
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
-console.log(_larkplayer.MediaSourceHandler);
-
 var HlsHandler = function (_MediaSourceHandler) {
     _inherits(HlsHandler, _MediaSourceHandler);
 
