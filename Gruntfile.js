@@ -62,23 +62,6 @@ module.exports = function (grunt) {
                 }
             }
         }
-        // browserify: {
-        //     dist: {
-        //         options: {
-        //             transform: [
-        //                 ["babelify", {
-        //                     presets: [ "es3", ["es2015", {"loose": true}]]
-        //                 }]
-        //             ],
-        //             browserifyOptions: {
-        //                 standalone: 'Hls'
-        //             }
-        //         },
-        //         files: {
-        //             './dist/hls.js': ['./hls/hls.js']
-        //         }
-        //     }
-        // }
     });
     grunt.loadNpmTasks('grunt-babel');
     // grunt.loadNpmTasks('grunt-contrib-uglify');

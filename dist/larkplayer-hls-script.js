@@ -2,9 +2,9 @@
 (function (global){
 'use strict';
 
-var _larkplayer = (typeof window !== "undefined" ? window['larkplayer'] : typeof global !== "undefined" ? global['larkplayer'] : null);
+exports.__esModule = true;
 
-var _larkplayer2 = _interopRequireDefault(_larkplayer);
+var _larkplayer = (typeof window !== "undefined" ? window['larkplayer'] : typeof global !== "undefined" ? global['larkplayer'] : null);
 
 var _hls = (typeof window !== "undefined" ? window['Hls'] : typeof global !== "undefined" ? global['Hls'] : null);
 
@@ -12,49 +12,35 @@ var _hls2 = _interopRequireDefault(_hls);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-/**
- * @file larkplayer hls plugin
- * @author yuhui06
- * @date 2018/3/23
- */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var larkplayerHlsHandler = {
-    name: 'hls',
-    mimeTypeRe: /application\/((x-mpegURL)|(vnd\.apple\.mpegurl))/i,
-    fileExtRe: /\.m3u8?/i,
-    hls: null,
-    canHandleSource: function canHandleSource() {
-        var source = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-        source.type = source.type + '';
-        source.src = source.src + '';
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @file larkplayer hls 插件，使得 larkplayer 可以播放 m3u8 视频
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author yuhui06
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @date 2018/3/23
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @date 2018/4/16 根据 larkplayer 接口变化更改插件
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
-        var canPlay = this.mimeTypeRe.test(source.type) || this.fileExtRe.test(source.src);
-        return canPlay && _hls2['default'] && _hls2['default'].isSupported();
-    },
-    handleSource: function handleSource() {
-        var source = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+console.log(_larkplayer.MediaSourceHandler);
 
-        var _this = this;
+var HlsHandler = function (_MediaSourceHandler) {
+    _inherits(HlsHandler, _MediaSourceHandler);
 
-        var player = arguments[1];
-        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    function HlsHandler(player, options) {
+        _classCallCheck(this, HlsHandler);
 
-        player.isReady = false;
+        var _this = _possibleConstructorReturn(this, _MediaSourceHandler.call(this, player, options));
 
-        if (this.hls) {
-            this.dispose();
-        }
+        _this.player.isReady = false;
+        _this.hls = new _hls2['default'](options);
 
-        this.hls = new _hls2['default'](options);
-        this.hls.attachMedia(player.tech.el);
-        this.hls.loadSource(source.src);
-
-        this.hls.on(_hls2['default'].Events.MANIFEST_PARSED, function (event, data) {
+        _this.hls.on(_hls2['default'].Events.MANIFEST_PARSED, function (event, data) {
             player.triggerReady();
         });
 
-        this.hls.on(_hls2['default'].Events.ERROR, function (event, data) {
+        _this.hls.on(_hls2['default'].Events.ERROR, function (event, data) {
             if (data.fatal) {
                 switch (data.type) {
                     case _hls2['default'].ErrorTypes.MEDIA_ERROR:
@@ -67,8 +53,33 @@ var larkplayerHlsHandler = {
                 }
             }
         });
-    },
-    handleMediaError: function handleMediaError() {
+        return _this;
+    }
+
+    HlsHandler.prototype.src = function src(_src) {
+        this.player.isReady = false;
+        this.hls.attachMedia(this.player.tech.el);
+        this.hls.loadSource(_src);
+    };
+
+    HlsHandler.prototype.internalPlay = function internalPlay() {
+        var playReturn = this.player.techGet('play');
+        if (playReturn && playReturn.then) {
+            playReturn.then(null, function (err) {
+                console && console.error && console.error(err);
+            });
+        }
+    };
+
+    HlsHandler.prototype.play = function play() {
+        if (this.player.isReady) {
+            this.internalPlay();
+        } else {
+            this.player.ready(this.internalPlay);
+        }
+    };
+
+    HlsHandler.prototype.handleMediaError = function handleMediaError() {
         var now = Date.now();
         var minRecoverInterval = 3000;
 
@@ -82,8 +93,9 @@ var larkplayerHlsHandler = {
         } else {
             this.hls.destroy();
         }
-    },
-    dispose: function dispose() {
+    };
+
+    HlsHandler.prototype.dispose = function dispose() {
         if (this.hls instanceof _hls2['default']) {
             this.hls.destroy();
             if (this.hls.bufferTimer) {
@@ -92,12 +104,22 @@ var larkplayerHlsHandler = {
             }
         }
         this.hls = null;
-    }
-};
+    };
 
-if (_hls2['default'] && _hls2['default'].isSupported()) {
-    _larkplayer2['default'].Html5.registerMediaSourceHandler(larkplayerHlsHandler);
-}
+    HlsHandler.canPlay = function canPlay(src, type) {
+        var fileExtReg = /\.m3u8?/i;
+        var typeReg = /application\/((x-mpegURL)|(vnd\.apple\.mpegurl))/i;
+
+        return _hls2['default'].isSupported() && (typeReg.test(type) || fileExtReg.test(src));
+    };
+
+    return HlsHandler;
+}(_larkplayer.MediaSourceHandler);
+
+exports['default'] = HlsHandler;
+
+
+_larkplayer.MediaSourceHandler.register(HlsHandler, { name: 'hls' });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1])(1)
