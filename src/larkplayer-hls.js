@@ -6,8 +6,10 @@
  */
 
 
-import {MediaSourceHandler} from 'larkplayer';
+import larkplayer from 'larkplayer';
 import Hls from 'hls.js';
+
+const MediaSourceHandler = larkplayer.MediaSourceHandler;
 
 export default class HlsHandler extends MediaSourceHandler {
     constructor(player, options) {

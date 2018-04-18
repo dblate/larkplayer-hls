@@ -5,6 +5,8 @@ exports.__esModule = true;
 
 var _larkplayer = require('larkplayer');
 
+var _larkplayer2 = _interopRequireDefault(_larkplayer);
+
 var _hls = require('hls.js');
 
 var _hls2 = _interopRequireDefault(_hls);
@@ -21,6 +23,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @date 2018/3/23
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @date 2018/4/16 根据 larkplayer 接口变化更改插件
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
+
+var MediaSourceHandler = _larkplayer2['default'].MediaSourceHandler;
 
 var HlsHandler = function (_MediaSourceHandler) {
     _inherits(HlsHandler, _MediaSourceHandler);
@@ -111,12 +115,12 @@ var HlsHandler = function (_MediaSourceHandler) {
     };
 
     return HlsHandler;
-}(_larkplayer.MediaSourceHandler);
+}(MediaSourceHandler);
 
 exports['default'] = HlsHandler;
 
 
-_larkplayer.MediaSourceHandler.register(HlsHandler, { name: 'hls' });
+MediaSourceHandler.register(HlsHandler, { name: 'hls' });
 
 },{"hls.js":"hls.js","larkplayer":"larkplayer"}]},{},[1])(1)
 });
