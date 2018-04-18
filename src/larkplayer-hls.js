@@ -1,35 +1,22 @@
 /**
- * @file larkplayer hls plugin
+ * @file larkplayer hls 插件，使得 larkplayer 可以播放 m3u8 视频
  * @author yuhui06
  * @date 2018/3/23
+ * @date 2018/4/16 根据 larkplayer 接口变化更改插件
  */
 
 
 import larkplayer from 'larkplayer';
 import Hls from 'hls.js';
 
-const larkplayerHlsHandler = {
-    name: 'hls',
-    mimeTypeRe: /application\/((x-mpegURL)|(vnd\.apple\.mpegurl))/i,
-    fileExtRe: /\.m3u8?/i,
-    hls: null,
-    canHandleSource(source = {}) {
-        source.type = source.type + '';
-        source.src = source.src + '';
+const MediaSourceHandler = larkplayer.MediaSourceHandler;
 
-        const canPlay = this.mimeTypeRe.test(source.type) || this.fileExtRe.test(source.src);
-        return canPlay && Hls && Hls.isSupported();
-    },
-    handleSource(source = {}, player, options = {}) {
-        player.isReady = false;
+export default class HlsHandler extends MediaSourceHandler {
+    constructor(player, options) {
+        super(player, options);
 
-        if (this.hls) {
-            this.dispose();
-        }
-
+        this.player.isReady = false;
         this.hls = new Hls(options);
-        this.hls.attachMedia(player.tech.el);
-        this.hls.loadSource(source.src);
 
         this.hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
             player.triggerReady();
@@ -48,7 +35,31 @@ const larkplayerHlsHandler = {
                 }
             }
         });
-    },
+    }
+
+    src(src) {
+        this.player.isReady = false;
+        this.hls.attachMedia(this.player.tech.el);
+        this.hls.loadSource(src);
+    }
+
+    internalPlay() {
+        const playReturn = this.player.techGet('play');
+        if (playReturn && playReturn.then) {
+            playReturn.then(null, err => {
+                console && console.error && console.error(err);
+            });
+        }
+    }
+
+    play() {
+        if (this.player.isReady) {
+            this.internalPlay();
+        } else {
+            this.player.ready(this.internalPlay);
+        }
+    }
+
     handleMediaError() {
         const now = Date.now();
         const minRecoverInterval = 3000;
@@ -63,7 +74,8 @@ const larkplayerHlsHandler = {
         } else {
             this.hls.destroy();
         }
-    },
+    }
+
     dispose() {
         if (this.hls instanceof Hls) {
             this.hls.destroy();
@@ -74,10 +86,15 @@ const larkplayerHlsHandler = {
         }
         this.hls = null;
     }
-};
 
-if (Hls && Hls.isSupported()) {
-    larkplayer.Html5.registerMediaSourceHandler(larkplayerHlsHandler);
+    static canPlay(src, type) {
+        const fileExtReg = /\.m3u8?/i;
+        const typeReg = /application\/((x-mpegURL)|(vnd\.apple\.mpegurl))/i;
+
+        return Hls.isSupported() && (typeReg.test(type) || fileExtReg.test(src));
+    }
 }
+
+MediaSourceHandler.register(HlsHandler, {name: 'hls'});
 
 
