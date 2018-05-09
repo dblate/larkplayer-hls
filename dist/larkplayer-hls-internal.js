@@ -17122,12 +17122,11 @@ if (!String.prototype.endsWith) {
 });
 
 },{}],2:[function(require,module,exports){
-(function (global){
 'use strict';
 
 exports.__esModule = true;
 
-var _larkplayer = (typeof window !== "undefined" ? window['larkplayer'] : typeof global !== "undefined" ? global['larkplayer'] : null);
+var _larkplayer = require('larkplayer');
 
 var _larkplayer2 = _interopRequireDefault(_larkplayer);
 
@@ -17246,6 +17245,5 @@ exports['default'] = HlsHandler;
 
 MediaSourceHandler.register(HlsHandler, { name: 'hls' });
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"hls.js":1}]},{},[2])(2)
+},{"hls.js":1,"larkplayer":"larkplayer"}]},{},[2])(2)
 });

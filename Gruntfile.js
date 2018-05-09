@@ -25,49 +25,47 @@ module.exports = function (grunt) {
                 }
             }
         },
-        // browserify: {
-        //     dist: {
-        //         options: {
-        //             transform: [
-        //                 ["babelify", {
-        //                     // presets: [ "es3", ["es2015", {"loose": true}]]
-        //                     presets: [ "es3", ["es2015", {"loose": true}]]
-        //                 }],
-        //                 ["browserify-shim"]
-        //             ],
-        //             browserifyOptions: {
-        //                 standalone: '<%= pkg.name %>'
-        //             }
-        //         },
-        //         files: {
-        //             './dist/<%= pkg.name %>-script.js': ['./src/<%= pkg.name %>.js']
-        //         }
-        //     }
-        // }
         browserify: {
             dist: {
                 options: {
                     transform: [
                         ["babelify", {
                             presets: [ "es3", ["es2015", {"loose": true}]]
-                        }]
+                        }],
+                        ["browserify-shim"]
                     ],
                     browserifyOptions: {
                         standalone: '<%= pkg.name %>'
-                    },
-                    external: ['larkplayer', 'hls.js']
+                    }
                 },
                 files: {
                     './dist/<%= pkg.name %>.js': ['./src/<%= pkg.name %>.js']
                 }
             }
         }
+        // browserify: {
+        //     dist: {
+        //         options: {
+        //             transform: [
+        //                 ["babelify", {
+        //                     presets: [ "es3", ["es2015", {"loose": true}]]
+        //                 }]
+        //             ],
+        //             browserifyOptions: {
+        //                 standalone: '<%= pkg.name %>'
+        //             },
+        //             external: ['larkplayer']
+        //         },
+        //         files: {
+        //             './dist/<%= pkg.name %>-internal.js': ['./src/<%= pkg.name %>.js']
+        //         }
+        //     }
+        // }
     });
     grunt.loadNpmTasks('grunt-babel');
-    // grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-browserify');
-    grunt.registerTask('default', ['browserify']);
-    // grunt.registerTask('default', ['less', 'browserify', 'copy']);
+    grunt.registerTask('default', ['browserify', 'uglify']);
 
     grunt.registerTask('generate-lib', ['babel'])
 };
