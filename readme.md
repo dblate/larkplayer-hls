@@ -1,10 +1,26 @@
-<h1>larkplayer-hls</h1>
+# larkplayer-hls
 
-[larkplayer](https://github.com/dblate/larkplayer) 插件，提供播放 m3u8 的能力
+[larkplayer](https://github.com/dblate/larkplayer) 插件，用于播放 m3u8 视频
 
-<h3>使用</h3>
+基于 [hls.js](https://github.com/video-dev/hls.js/) 开发
 
-<h4>通过 script 标签的形式 </h4>
+## 下载
+
+NPM
+
+```shell
+npm install larkplayer-hls
+```
+
+CDN
+
+```javascript
+<script type="text/javascript" src="https://unpkg.com/larkplayer-hls@latest/dist/larkplayer-hls.js"></script>
+```
+
+### 使用
+
+#### script
 
 ```javascript
 <!DOCTYPE html>
@@ -22,9 +38,9 @@
         var player = larkplayer('video-el', {
             width: 640,
             height: 360,
-            // 此配置项可选，可配置 hls 对应的参数（即为 hls.js 提供的参数）
             MS: {
-                hls: {}
+                // 可选，详细参数见 https://github.com/video-dev/hls.js/blob/master/docs/API.md#fine-tuning
+                hls: {}
             }
         }, function () {
             console.log('player is ready');
@@ -37,13 +53,10 @@
 
 ```
 
-<h4>通过 import 的形式</h4>
-
-* require 与 import 用法相似，只不过换了个写法，反正目前都会被编译为差不多的代码 :)
+#### npm & es6
 
 ```javascript
 import larkplayer from 'larkplayer';
-import 'hls.js';
 import 'larkplayer-hls';
 
 const player = larkplayer('video-el');
